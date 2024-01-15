@@ -26,18 +26,11 @@ public class Truck : MonoBehaviour
     public bool isWaiting;
     private Truck truck;
 
-
-
     [Range(0, 1)]
     public float tParam;
 
-
-    // public FullPath fullPath;
-
-    // Start is called before the first frame update
     void Start()
     {
-       // Debug.Log(LayerMask.GetMask("UserLayerA", "UserLayerB"));
         _stateMachine = new StateMachine(this);
         _instTruck = FindObjectOfType<InstantiateTruck>();
         _stateMachine.Start();
@@ -45,14 +38,13 @@ public class Truck : MonoBehaviour
         _canMove = true;
         _instTruck.TruckSpawn();
         _runOnce = false;
-       //_routeToGo = 0;
+
     }
 
-    // Update is called once per frame
     void Update()
     {
         Sensor();
-        // Для просмотра состояния в инспекторе
+  
        _currentState = GetCurrentStateOfTruck();   
 
 
@@ -63,24 +55,18 @@ public class Truck : MonoBehaviour
 
         if (_isLoadingFinished & (_stateMachine.getCurrentState().Equals(_stateMachine.GetState<Loading>())) & !isWaiting)
         {
-            //_instTruck.Inst();
-            //Instantiate(_instTruck.truckPrefab, new Vector3(-138, 1, 173), new Quaternion(0, 0, -4, 0));
             _canMove = true;
             _runOnce = false;
 
         }
         if ((_stateMachine.getCurrentState().Equals(_stateMachine.GetState<WaitingState>())))
         {
-
             if (!isAnyTruckLoaded())
             {
-               
                 _canMove = true;
-                
             }
             else {
                 _canMove = false;
-               
             }
 
             if (!_runOnce)
@@ -102,14 +88,6 @@ public class Truck : MonoBehaviour
            
         }
     }
-
-  // private void OnTriggerEnter(Collider other)
-   // {
-  //      if (other.gameObject.tag == "Waiting") {
-         //   Debug.Log("Триггер Waiting");
-         //   _stateMachine.setStateWaiting();
-    //    }
-  //  }
 
     public float getSpeed()
     {
@@ -145,44 +123,32 @@ public class Truck : MonoBehaviour
     {
         this._routeToGo = zero;
     }
-
-
     public void setTparamToZero(float zero)
     {
         this.tParam = zero;
     }
-
-
     private void OnCollisionEnter(Collision collision)
     {     
         if (collision.gameObject.tag == "Waiting")
         {
-            Debug.Log("Есть соприкосновение со сферой Waiting");
             _stateMachine.setStateWaiting();
         }
-
         if (collision.gameObject.tag == "Loading")
         {
-            Debug.Log("Есть соприкосновение со сферой Loading");
+            Debug.Log("Г…Г±ГІГј Г±Г®ГЇГ°ГЁГЄГ®Г±Г­Г®ГўГҐГ­ГЁГҐ Г±Г® Г±ГґГҐГ°Г®Г© Loading");
             _stateMachine.setStateLoading();
         }
-
         if (collision.gameObject.tag == "Truck_exit")
         {
-          //  Debug.Log("Есть соприкосновение со сферой EXIT");
             _stateMachine.setStateOut();
         }
     }
-
     public String GetCurrentStateOfTruck()
     {
-      //  if (_stateMachine.getCurrentState().Equals(_stateMachine.GetState<Loading>()))
-       //   return "Loading";
+
        return _stateMachine.getCurrentState().ToString();
     }
-
     public bool isAnyTruckLoaded() {
-       // IsTree[] trees = GameObject.FindGameObjectsOfType<IsTree>();
         _trucks = GameObject.FindObjectsOfType<Truck>();
         if (_trucks.Length > 0)
         {
@@ -191,18 +157,15 @@ public class Truck : MonoBehaviour
    
                 if (_trucks[i].GetCurrentStateOfTruck().Equals("Loading"))
                 {
-                    Debug.Log(" НА ЗАГРУЗКЕ НАХОДИТСЯ ГРУЗОВИК");
+                    Debug.Log(" ГЌГЂ Г‡ГЂГѓГђГ“Г‡ГЉГ… ГЌГЂГ•ГЋГ„Г€Г’Г‘Гџ ГѓГђГ“Г‡ГЋГ‚Г€ГЉ");
                     return true;
                 }
             }
         }
-
         return false;
     }
-
     private void Sensor()
     {
-        
         var layerMask = 1 << 8;
         Vector3 frontSensor = new Vector3(0f, 7f, 15f);
         RaycastHit truckHit;
@@ -212,15 +175,11 @@ public class Truck : MonoBehaviour
         Debug.DrawRay(sensorStartPosition, transform.forward * 5, Color.red);
         if (Physics.Raycast(sensorStartPosition, transform.forward * 5, out truckHit, 8f))
         {
-   
             Truck target = truckHit.transform.gameObject.GetComponent<Truck>();
-
-
             if (target != null)
             {
                 setSpeed(0.0f);
                 target = null;
-                //_stateMachine.setIdleState();
 
             } else if (target != null) {
                 setSpeed(0.2f);
@@ -228,66 +187,12 @@ public class Truck : MonoBehaviour
 
         }
     }
-
-   
-  
-
     public void OnDestroy()
     {
-        Debug.Log("Удаление объекта");
         Destroy(gameObject);
     }
 }
-//   private static readonly (float, float)[] CubicQuadrature =
-//{(-0.7745966F, 0.5555556F), (0, 0.8888889F), (0.7745966F, 0.5555556F)};
-//public float arclength(float t) => integrate(x => tangentmagnitude(x), 0, t);
 
-//public static float integrate(func<float, float> f, in float lowerbound, in float uppedbound)
-//{
-//    var sum = 0f;
-//    foreach (var (arg, weight) in cubicquadrature)
-//    {
-//        var t = mathf.lerp(lowerbound, uppedbound, mathf.inverselerp(-1, 1, arg));
-//        sum += weight * f(t);
-//    }
-
-//    return sum * (uppedbound - lowerbound) / 2;
-//}
-
-//private float parameter(float length)
-//{
-//    float t = 0 + length / arclength(1);
-//    float lowerbound = 0f;
-//    float upperbound = 1f;
-
-//    for (int i = 0; i < 100; ++i)
-//    {
-//        float f = arclength(t) - length;
-
-//        if (mathf.abs(f) < 0.01f)
-//            break;
-
-//        float derivative = tangentmagnitude(t);
-//        float candidatet = t - f / derivative;
-
-//        if (f > 0)
-//        {
-//            upperbound = t;
-//            if (candidatet <= 0)
-//                t = (upperbound + lowerbound) / 2;
-//            else
-//                t = candidatet;
-//        }
-//        else
-//        {
-//            lowerbound = t;
-//            if (candidatet >= 1)
-//                t = (upperbound + lowerbound) / 2;
-//            else
-//                t = candidatet;
-//        }
-//    }
-//    return t;
 
 
   
