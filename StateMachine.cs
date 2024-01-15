@@ -4,23 +4,17 @@ using UnityEngine;
 using System;
 
 
-//Класс для переключения состояний содержит ссыки на объект дивжения и на Объекты классов состояний
-// объекты классов состояний унаследованы от интерфейса Istate
-
 public class StateMachine
 {
-
     public Dictionary<Type, IState> stateMap;
     private IState _currentState;
     private Truck _truck;
-
     public MonoBehaviour dynamicOdject;
-
-
+    
     public StateMachine(Truck truck) {
         _truck = truck;   
     }
-    // Инициализируем весь словарь с состоянийми и задаем начальное состояние
+
    public void Start()
     {
         this.InitState();
@@ -36,7 +30,7 @@ public class StateMachine
         this.stateMap[typeof(TruckOutState)] = new TruckOutState(_truck);
     }
 
-    // Используется для присоедния функции update конкретного состояния чтобы в дальнейшем можно было присоедить к объекту Monobeh
+  
      public void Update()
     {
         if (this._currentState != null)
@@ -55,7 +49,6 @@ public class StateMachine
        if (this._currentState != newState) {
             this._currentState = newState;
             this._currentState.Enter();
-            
         }
         
     }
@@ -64,26 +57,21 @@ public class StateMachine
     {
         var type = typeof(T);
         return this.stateMap[type];
-
     }
 
     private void SetStateByDefault()
     {
         setStateMoving();
     }
-
-
     public void setIdleState()
     {
         var state = this.GetState<IdleState>();
         this.SetState(state);
-
     }
     public void setStateMoving()
     {
         var state = this.GetState<MovingState>();
         this.SetState(state);
-
     }
 
     public void setStateWaiting()
